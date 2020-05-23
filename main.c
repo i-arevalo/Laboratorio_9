@@ -6,7 +6,7 @@
  * Nombre del archivo: main.c
  *
  * Referencia: Se utilizó como referencia el código de ejemplo que se encontraba en
- *             la guia del laboratorio 9
+ *             la guia del laboratorio 9 y los ejemplos que se encuentran en canvas
  */
 
 
@@ -48,11 +48,12 @@ int main(void)
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_UART0));//Espera a que se termine de configurar el UART
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA); //Se habilita el puerto RX y TX
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOA));//Espera a que termine de configurarse los puertos de UART
-    GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 |GPIO_PIN_1);//DEFINO LOS PINES
+    GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 |GPIO_PIN_1);//Se definen los pines del UART
     UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |UART_CONFIG_PAR_NONE));
     IntEnable(INT_UART0);//Se habilita la interrupción del UART
     UARTIntEnable(UART0_BASE, UART_INT_RX);
     UARTIntDisable(UART0_BASE, UART_INT_9BIT|UART_INT_TX |UART_INT_OE|UART_INT_BE|UART_INT_PE|UART_INT_FE|UART_INT_RT|UART_INT_DSR|UART_INT_DCD |UART_INT_CTS | UART_INT_RI);
+    UARTFIFOLevelSet(UART0_BASE,UART_FIFO_TX1_8,UART_FIFO_RX1_8);//Se define el tamaño del FIFO
     UARTEnable(UART0_BASE);//Se habilita el UART0
     while(1);
 }
@@ -63,11 +64,11 @@ void Timer0IntHandler(void)
    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);//Se limpia la interrupción del timer
    if (!ban)
    {
-       if (valor == 'r')
+       if (valor == 'r')//Sentencia para saber si la consola envio el caracter r
            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0xff);
-       else if (valor == 'b')
+       else if (valor == 'b')//Sentencia para saber si la consola envio el caracter b
            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, 0xff);
-       else if (valor == 'g')
+       else if (valor == 'g')//Sentencia para saber si la consola envio el caracter g
            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 0xff);
        ban = true;
    }
